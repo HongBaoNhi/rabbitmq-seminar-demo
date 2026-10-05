@@ -68,8 +68,8 @@ Password: guest
 ### 1. Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd rabbitmq
+git clone https://github.com/HongBaoNhi/rabbitmq-seminar-demo.git
+cd rabbitmq-seminar-demo
 ```
 
 ### 2. Run the application
