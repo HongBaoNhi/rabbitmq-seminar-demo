@@ -20,9 +20,7 @@ Before running the project, make sure you have installed:
 
 ---
 
-# Step-by-Step Setup Guide
-
-## Step 1: Start RabbitMQ with Docker 🐳
+## Step 1: Start RabbitMQ with Docker
 
 Open your terminal (**Terminal** on macOS / **PowerShell** or **Command Prompt** on Windows) and run:
 
@@ -63,7 +61,7 @@ Password: guest
 
 ---
 
-## Step 2: Clone & Run the Spring Boot Application 💻
+## Step 2: Clone & Run the Spring Boot Application
 
 ### 1. Clone the repository
 
@@ -87,7 +85,7 @@ Open Terminal in the project root folder and execute:
 Open CMD or PowerShell in the project root folder and execute:
 
 ```cmd
-mvnw.cmd spring-boot:run
+.\mvnw.cmd spring-boot:run "-DskipTests"
 ```
 
 > **Note:** The application will automatically connect to RabbitMQ at `localhost:5672` and start the embedded Tomcat server on port `8080`.
@@ -172,50 +170,6 @@ If the RabbitMQ container has stopped, restart it using:
 
 ```bash
 docker start rabbitmq
-```
-
----
-
-#Project Architecture
-
-```text
-src/main/java/com/seminar/rabbitmq/
-├── config/
-│   └── RabbitMQConfig.java
-│       # Queue & Exchange configuration
-│
-├── service/
-│   ├── Producer.java
-│   │   # REST Controller sending messages to the Queue
-│   │
-│   └── Consumer.java
-│       # Service listening to the Queue and processing tasks
-│
-└── RabbitmqApplication.java
-    # Spring Boot Main Class
-```
-
----
-
-## Project Flow
-
-```text
-Client
-   │
-   │ HTTP Request
-   ▼
-Producer
-   │
-   │ Message
-   ▼
-RabbitMQ Queue
-   │
-   │ Asynchronous Delivery
-   ▼
-Consumer
-   │
-   ▼
-Process Order
 ```
 
 ---
