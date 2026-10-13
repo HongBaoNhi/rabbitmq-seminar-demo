@@ -20,7 +20,7 @@ Before running the project, make sure you have installed:
 
 ---
 
-## Step 1: Start RabbitMQ with Docker
+## Step 1: Start RabbitMQ with Docker   
 
 Open your terminal (**Terminal** on macOS / **PowerShell** or **Command Prompt** on Windows) and run:
 
