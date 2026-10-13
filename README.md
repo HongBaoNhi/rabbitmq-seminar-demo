@@ -38,12 +38,6 @@ Run:
 docker ps
 ```
 
-Make sure the RabbitMQ container appears with the status:
-
-```text
-Up
-```
-
 **2. Open the RabbitMQ Management Dashboard**
 
 Open your browser and go to:
