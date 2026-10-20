@@ -16,6 +16,6 @@ public class Producer {
     @GetMapping("/send-order")
     public String sendOrder(@RequestParam String orderDetails) {
         rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME, orderDetails);
-        return "Đã gửi đơn hàng thành công: " + orderDetails;
+        return "Order placed successfully: " + orderDetails;
     }
 }

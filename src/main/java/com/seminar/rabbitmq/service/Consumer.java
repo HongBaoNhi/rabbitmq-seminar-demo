@@ -9,6 +9,6 @@ public class Consumer {
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
     public void receiveOrder(String orderDetails) {
-        System.out.println("--> Đang xử lý ngầm đơn hàng nhận được từ Queue: " + orderDetails);
+        System.out.println("--> Processing order from Queue in background: " + orderDetails);
     }
 }
