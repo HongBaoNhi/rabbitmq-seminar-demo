@@ -10,6 +10,6 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue orderQueue() {
-        return new Queue(QUEUE_NAME, true); // true: Hàng đợi bền vững (durable)
+        return new Queue(QUEUE_NAME, true); 
     }
 }
