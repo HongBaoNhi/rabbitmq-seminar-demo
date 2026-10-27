@@ -1,175 +1,118 @@
 # RabbitMQ & Spring Boot Integration
 
-Hello everyone!
+This repository contains the source code and setup guide for our seminar on **Data & Infrastructure Services: RabbitMQ**.
 
-This repository contains the full source code and a step-by-step setup guide for our seminar on **Data & Infrastructure Services: RabbitMQ**.
+The demo shows how a Spring Boot application can send an order message to RabbitMQ and process it asynchronously with a consumer.
 
-In this project, we demonstrate how to use **RabbitMQ** to build an asynchronous and decoupled message queue system using the **Producer-Consumer pattern** in a Spring Boot application.
+## Architecture
 
-Feel free to clone, run, and adapt this code for your own semester projects!
+```text
+Browser / Postman
+       |
+       | GET /send-order?orderDetails=...
+       v
+Spring Boot Producer
+       |
+       | publishes message
+       v
+RabbitMQ queue: orderQueue
+       |
+       | delivers message
+       v
+Spring Boot Consumer
+```
 
----
+The application declares the durable `orderQueue` queue at startup. The producer publishes messages to it, and the consumer listens for and processes them asynchronously.
 
 ## Prerequisites
 
-Before running the project, make sure you have installed:
+- **JDK 17 or later**
+- **Docker Desktop** (or Docker Engine) to run RabbitMQ
+- **Git**
 
-1. **Java Development Kit (JDK 17 or 21)**
-2. **Docker Desktop** — Required to run the RabbitMQ broker
-3. **Git**
+## 1. Start RabbitMQ
 
----
-
-## Step 1: Start RabbitMQ with Docker   
-
-Open your terminal (**Terminal** on macOS / **PowerShell** or **Command Prompt** on Windows) and run:
+Start Docker, then run this command in a terminal:
 
 ```bash
 docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
-### Verify RabbitMQ
-
-**1. Check the container status**
-
-Run:
+Check that the container is running:
 
 ```bash
 docker ps
 ```
 
-**2. Open the RabbitMQ Management Dashboard**
+The application connects to RabbitMQ at `localhost:5672`. The management dashboard is available at `http://localhost:15672`.
 
-Open your browser and go to:
+> If a container named `rabbitmq` already exists, start it with `docker start rabbitmq` instead of running `docker run` again.
 
-```text
-http://localhost:15672
-```
+## 2. Clone and run the application
 
-**3. Log in with the default credentials**
-
-```text
-Username: guest
-Password: guest
-```
-
----
-
-## Step 2: Clone & Run the Spring Boot Application
-
-### 1. Clone the repository
+Clone the repository and change into its directory:
 
 ```bash
 git clone https://github.com/HongBaoNhi/rabbitmq-seminar-demo.git
 cd rabbitmq-seminar-demo
 ```
 
-### 2. Run the application
+Run the Spring Boot application from the project directory.
 
-#### On macOS / Linux
-
-Open Terminal in the project root folder and execute:
+### macOS / Linux
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-#### On Windows
+### Windows (PowerShell)
 
-Open CMD or PowerShell in the project root folder and execute:
-
-```cmd
-.\mvnw.cmd spring-boot:run "-DskipTests"
+```powershell
+.\mvnw.cmd spring-boot:run
 ```
 
-> **Note:** The application will automatically connect to RabbitMQ at `localhost:5672` and start the embedded Tomcat server on port `8080`.
+Wait until Spring Boot reports that the application has started. It uses port `8080` by default.
 
----
+## 3. Open the RabbitMQ dashboard
 
-## Step 3: Test the Producer-Consumer Flow
+Visit [http://localhost:15672](http://localhost:15672) and sign in with the default credentials:
 
-Once the Spring Boot application is running, open your browser or Postman and trigger the REST API:
+```text
+Username: guest
+Password: guest
+```
+
+Open **Queues and Streams** (or **Queues**, depending on the RabbitMQ version) and select `orderQueue`.
+
+## 4. Send a test order
+
+With the application running, open this URL in a browser or send a GET request with Postman:
 
 ```text
 http://localhost:8080/send-order?orderDetails=TestOrder123
 ```
 
-### Expected Results
-
-#### 1. Browser Output — Producer Response
+The HTTP response from the producer is:
 
 ```text
-Đã gửi đơn hàng thành công: TestOrder123
+Order placed successfully: TestOrder123
 ```
 
-#### 2. Terminal Console — Consumer Output
-
-The consumer will process the message asynchronously in real time.
+The consumer processes the message asynchronously and prints a line like this in the Spring Boot terminal:
 
 ```text
---> Đang xử lý ngầm đơn hàng nhận được từ Queue: TestOrder123
+--> Processing order from Queue in background: TestOrder123
 ```
 
-#### 3. RabbitMQ Dashboard
+Because the consumer handles messages as they arrive, a message may disappear from the queue quickly. Use the consumer output in the application terminal, or the queue's message rates in the dashboard, to observe the flow.
 
-Open:
+## Troubleshooting
 
-```text
-http://localhost:15672
-```
-
-Then go to the **Queues** tab to observe the message activity in real time.
-
----
-
-# Common Troubleshooting & Fixes
-
-## Issue 1: `Port 8080 was already in use`
-
-### macOS
-
-Run the following command in Terminal to free port `8080`:
-
-```bash
-kill -9 $(lsof -t -i:8080)
-```
-
-### Windows
-
-First, find the PID using port `8080`:
-
-```cmd
-netstat -ano | findstr :8080
-```
-
-Then terminate the process:
-
-```cmd
-taskkill /PID <PID_NUMBER> /F
-```
-
----
-
-## Issue 2: `Connection Refused` on port `5672`
-
-Make sure **Docker Desktop** is running and the RabbitMQ container is active.
-
-Check the container with:
-
-```bash
-docker ps
-```
-
-If the RabbitMQ container has stopped, restart it using:
-
-```bash
-docker start rabbitmq
-```
-
----
+- **Cannot connect to RabbitMQ on port `5672`:** Make sure Docker is running and the `rabbitmq` container is up (`docker ps`). If it is stopped, run `docker start rabbitmq`.
+- **Port `5672` or `15672` is already in use:** Stop or reconfigure the service using that port, then start the container again.
+- **Port `8080` is already in use:** Stop the other application using port `8080`, or configure this application's server port before running it.
+- **The dashboard does not open:** Confirm the RabbitMQ container is running and that port `15672` was published.
 
 ## Summary
 
-This project demonstrates how **RabbitMQ** can be integrated with **Spring Boot** to implement asynchronous communication between a **Producer** and a **Consumer**.
-
-The architecture helps separate message production from message processing, making the system more decoupled and suitable for distributed applications.
+This demo integrates RabbitMQ with Spring Boot to illustrate asynchronous communication using the producer-consumer pattern. The producer and consumer communicate through `orderQueue` rather than calling each other directly.
