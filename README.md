@@ -86,6 +86,11 @@ The response is `Order placed successfully: TestOrder123`. The Spring Boot termi
 
 Because the consumer handles messages as they arrive, a message may disappear from the queue quickly. Use the consumer output or queue message rates in the dashboard to observe the flow.
 
+## Loop command
+```bash
+for /L %i in (1,1,1000) do @curl -s "http://localhost:8080/send-order?orderDetails=Order%i"
+```
+
 ## 4. Start Kafka for comparison
 
 The project already contains the Kafka dependency, connection settings, producer, consumer, and topic configuration. There is no code to copy or add manually.
@@ -139,6 +144,8 @@ The RabbitMQ response is `Order placed successfully: TestOrder123`. The Kafka re
 --> Processing order from Queue in background: TestOrder123
 --> Processing order from Kafka topic in background: TestOrder123
 ```
+
+
 
 ### Observe Kafka records
 
